@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Special One?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff6f61, #f9a8d4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 50px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        #yesBtn {
+            background-color: #ff79c6;
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #ff5252;
+            color: white;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .love-message {
+            display: none;
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+        <h1 id="question">Will You Be My Special One? 💖</h1>
+        <div class="buttons">
+            <button id="yesBtn">Yes 💕</button>
+            <button id="noBtn">No 💔</button>
+        </div>
+    </div>
+
+    <div class="love-message" id="loveMessage">
+        <h1>I Love You Forever! ❤️</h1>
+        <p>You are my special one! 💕</p>
+    </div>
+
+    <script>
+        // Google Form POST URL
+        const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdnCXxhyJu8Jy827gXBACxB-S9kqFFs0_yWUIBREeSoBXMFOQ/formResponse';
+
+        // Replace 'entry.XXXXX' with your actual entry ID from the form
+        const responseField = 'entry.YOUR_ENTRY_ID';
+
+        const questions = [
+            "Think once again 💭",
+            "Don't do this with me, please 😢",
+            "I request you to accept me 🙏"
+        ];
+        let noClickCount = 0;
+
+        document.getElementById('yesBtn').addEventListener('click', function () {
+            submitToGoogleForm('Yes');
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('loveMessage').style.display = 'block';
+        });
+
+        document.getElementById('noBtn').addEventListener('click', function () {
+            if (noClickCount < questions.length) {
+                displayNextQuestion();
+            } else {
+                moveNoButtonRandomly();
+            }
+            submitToGoogleForm('No');
+        });
+
+        function submitToGoogleForm(response) {
+            const formData = new FormData();
+            formData.append(responseField, response);
+
+            fetch(formUrl, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(() => {
+                    console.log(`${response} submitted successfully.`);
+                })
+                .catch((error) => {
+                    console.error('Error submitting response:', error);
+                });
+        }
+
+        function displayNextQuestion() {
+            document.getElementById('question').textContent = questions[noClickCount];
+            noClickCount++;
+        }
+
+        function moveNoButtonRandomly() {
+            const noButton = document.getElementById('noBtn');
+            const maxX = window.innerWidth - noButton.offsetWidth;
+            const maxY = window.innerHeight - noButton.offsetHeight;
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            noButton.style.position = 'absolute';
+            noButton.style.left = `${randomX}px`;
+            noButton.style.top = `${randomY}px`;
+        }
+    </script>
+
+</body>
+</html>
